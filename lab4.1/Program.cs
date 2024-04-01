@@ -9,12 +9,12 @@ class Ellipse
         this.b = b;
     }
 
-    public virtual void PrintCoefficients()
+    public void PrintCoefficients()
     {
         Console.WriteLine($"Коефіцієнти еліпса: a = {a}, b = {b}");
     }
 
-    public virtual bool PointBelongsToCurve(double x, double y)
+    public bool PointBelongsToCurve(double x, double y)
     {
         return (x * x) / (a * a) + (y * y) / (b * b) <= 1;
     }
@@ -35,12 +35,12 @@ class SecondOrderCurve : Ellipse
         this.c = c;
     }
 
-    public override void PrintCoefficients()
+    public new void PrintCoefficients()
     {
         Console.WriteLine($"Коефіцієнти кривої другого порядку: a11 = {a11}, a12 = {a12}, a22 = {a22}, b1 = {b1}, b2 = {b2}, c = {c}");
     }
 
-    public override bool PointBelongsToCurve(double x, double y)
+    public new bool PointBelongsToCurve(double x, double y)
     {
         return a11 * x * x + 2 * a12 * x * y + a22 * y * y + b1 * x + b2 * y + c == 0;
     }
