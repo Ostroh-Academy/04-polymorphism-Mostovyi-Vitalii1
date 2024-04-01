@@ -1,48 +1,34 @@
 ﻿using System;
 
-class Ellipse
+abstract class ShapeFactory
 {
-    protected double a, b;
-    public Ellipse(double a, double b)
+    public abstract Ellipse CreateEllipse();
+    public abstract SecondOrderCurve CreateSecondOrderCurve();
+}
+
+class EllipseFactory : ShapeFactory
+{
+    public override Ellipse CreateEllipse()
     {
-        this.a = a;
-        this.b = b;
+        return new Ellipse(1, 20);
     }
 
-    public void PrintCoefficients()
+    public override SecondOrderCurve CreateSecondOrderCurve()
     {
-        Console.WriteLine($"Коефіцієнти еліпса: a = {a}, b = {b}");
-    }
-
-    public bool PointBelongsToCurve(double x, double y)
-    {
-        return (x * x) / (a * a) + (y * y) / (b * b) <= 1;
+        throw new InvalidOperationException("EllipseFactory cannot create SecondOrderCurve.");
     }
 }
 
-class SecondOrderCurve : Ellipse
+class SecondOrderCurveFactory : ShapeFactory
 {
-    private double a11, a12, a22, b1, b2, c;
-
-    public SecondOrderCurve(double a11, double a12, double a22, double b1, double b2, double c)
-        : base(0, 0)
+    public override Ellipse CreateEllipse()
     {
-        this.a11 = a11;
-        this.a12 = a12;
-        this.a22 = a22;
-        this.b1 = b1;
-        this.b2 = b2;
-        this.c = c;
+        throw new InvalidOperationException("SecondOrderCurveFactory cannot create Ellipse.");
     }
 
-    public new void PrintCoefficients()
+    public override SecondOrderCurve CreateSecondOrderCurve()
     {
-        Console.WriteLine($"Коефіцієнти кривої другого порядку: a11 = {a11}, a12 = {a12}, a22 = {a22}, b1 = {b1}, b2 = {b2}, c = {c}");
-    }
-
-    public new bool PointBelongsToCurve(double x, double y)
-    {
-        return a11 * x * x + 2 * a12 * x * y + a22 * y * y + b1 * x + b2 * y + c == 0;
+        return new SecondOrderCurve(1, 2, 3, 4, 5, 6);
     }
 }
 
@@ -53,7 +39,7 @@ class Program
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
         int userChoose;
-        Ellipse shape;
+        ShapeFactory factory;
 
         do
         {
@@ -68,21 +54,30 @@ class Program
 
             if (userChoose == 1)
             {
-                shape = new Ellipse(1, 20);
+                factory = new EllipseFactory();
             }
             else
             {
-                shape = new SecondOrderCurve(1, 2, 3, 4, 5, 6);
+                factory = new SecondOrderCurveFactory();
             }
 
-            shape.PrintCoefficients();
+            Ellipse shape1 = factory.CreateEllipse();
+            SecondOrderCurve shape2 = factory.CreateSecondOrderCurve();
+
+            shape1.PrintCoefficients();
+            shape2.PrintCoefficients();
 
             Console.Write("Введіть координату x: ");
             double x = double.Parse(Console.ReadLine());
             Console.Write("Введіть координату y: ");
             double y = double.Parse(Console.ReadLine());
 
-            if (shape.PointBelongsToCurve(x, y))
+            if (shape1.PointBelongsToCurve(x, y))
+                Console.WriteLine($"Точка ({x}, {y}) належить фігурі.");
+            else
+                Console.WriteLine($"Точка ({x}, {y}) не належить фігурі.");
+
+            if (shape2.PointBelongsToCurve(x, y))
                 Console.WriteLine($"Точка ({x}, {y}) належить фігурі.");
             else
                 Console.WriteLine($"Точка ({x}, {y}) не належить фігурі.");
